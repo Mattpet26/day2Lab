@@ -5,14 +5,12 @@ let KeyWordArray = [];
 let hornsArray = [];
 
 function Gallery (name, src, about, keyword, horns){
-  // name, src, about, ect are parameters
   this.name = name;
   this.src = src;
   this.about = about;
   this.keyword = keyword;
   this.horns = horns;
 
-  hornsArray.push(this);
   imageArray.push(this);
 }
 
@@ -28,48 +26,41 @@ Gallery.prototype.renderWithCreation = function(){
 
 
 const optionObject = {
-  // this is an object literal with properties
   method: 'get',
   datatype: 'json'
 }
 
 
 const handleImagesFromJson = ArrFromJson => {
-  // the thing before an arrow function is the parameter = (arrfromjson)
   ArrFromJson.forEach(newImages => {
     new Gallery (newImages.title, newImages.image_url, newImages.description, newImages.keyword, newImages.horns);
-
-    //enter a sort statement here
-    if (!hornsArray.includes(newImages.horns)) {
-      
-    }
 
     if (!KeyWordArray.includes(newImages.keyword)) {
       KeyWordArray.push(newImages.keyword);
     }
   });
-  imageArray.forEach(petValue => petValue.renderMustache());
+  //add a sorter here
+  imageArray.sort((a, b) => {
+    if(a.horns > b.horns){
+      return 1;
+    }else if (a.horns < b.horns){
+      return -1;
+    }else{
+      return 0;
+    }
+  });
+
+  imageArray.forEach(imageValueIndex => imageValueIndex.renderMustache());
   renderOptionSelection(KeyWordArray);
-  renderOptionsForHorns(hornsArray)
+  // renderOptionsForHorns(hornsArray);
 };
 $.ajax('data/page-1.json', optionObject)
   .then(handleImagesFromJson);
 
 
-
-
-
-const renderOptionsForHorns = function (hornsArray) {
-  hornsArray.forEach(horns => {
-    const $clonedOption = $('<option></option>').clone();
-    $clonedOption.attr('value', horns);
-    $clonedOption.text(horns);
-    $('#selectHorns').append($clonedOption);
-  });
-};
-
-const renderOptionSelection = function (Potato) {
-  Potato.forEach(keyword => {
+//========================================= keyword options
+const renderOptionSelection = function (arr) {
+  arr.forEach(keyword => {
     const $clonedOption = $('<option></option>');
     $clonedOption.attr('value', keyword);
     $clonedOption.text(keyword);
@@ -79,9 +70,8 @@ const renderOptionSelection = function (Potato) {
 
 
 
-// chosing a select, then when the event change happens we run the funct
-// on == ELEMENT.addEventListener
-$('select').on('change', selectOptionKeyWord);
+//=========================================== keyword display img
+$('#selectKeyword').on('change', selectOptionKeyWord);
 function selectOptionKeyWord (){
   const userSelection = $(this).val();
   $('li').hide();
@@ -97,14 +87,44 @@ function selectOptionKeyWord (){
     }
   })
 }
-/*
-  Iterate over the array objects
-  if we find a match between the title of our animal object and the selected dropdown value
-  select all the li's
-  iterate over them
-  if the animal object matches the h2 of the list items
-  show that list item
-*/
+
+//======================================= horn options
+const renderOptionsForHorns = function (arr) {
+  arr.forEach(horns => {
+    const $clonedOption = $('<option></option>');
+    $clonedOption.attr('value', horns);
+    $clonedOption.text(horns);
+    $('#selectHorns').append($clonedOption);
+  });
+};
+
+// ====================================== horn display img
+$('#selectHorns').on('change', selectHornsByImg);
+function selectHornsByImg (){
+  const userSelectionByHorns = $(this).val();
+  $('li').hide();
+  imageArray.forEach(function(storedImages){
+    console.log(userSelectionByHorns);
+    if(userSelectionByHorns === storedImages.horns){
+      const imageTitle = storedImages.name;
+      const imageListItems = $('li');
+      imageListItems.each(function(){
+        if($(this).find('h3').text() === imageTitle){
+          $(this).show();
+        }
+      })
+    }
+  })
+}
+
+
+
+
+
+
+
+
+
 
 
 
