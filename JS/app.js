@@ -4,6 +4,7 @@ const imageArray = [];
 const KeyWordArray =[];
 
 function Gallery (name, src, about, keyword, horns){
+  // name, src, about, ect are parameters
   this.name = name;
   this.src = src;
   this.about = about;
@@ -25,17 +26,20 @@ Gallery.prototype.renderJQuery = function(){
   $clonedListItemElement.find('#keywordsGo').text(this.keyword);
 
   $('ul').append($clonedListItemElement);
+  $clonedListItemElement.show();
 }
 
 // asynchronous javascript and xml - million years to complete
 // javascript does it asynchronously - does it in background
 const optionObject = {
+  // this is an object literal with properties
   method: 'get',
   datatype: 'json'
 }
 
 // reconstitute - pass it(back) trhough the constructor
 const handleImagesFromJson = ArrFromJson => {
+  // the thing before an arrow function is the parameter = (arrfromjson)
   ArrFromJson.forEach(newImages => {
     new Gallery (newImages.title, newImages.image_url, newImages.description, newImages.keyword, newImages.horns);
 
@@ -59,17 +63,19 @@ const renderOptionSelection = function (KeyWordArray) {
   });
 };
 
+
 $('select').on('change', selectOptionKeyWord);
+// chosing a select, then when the event change happens we run the funct
+// on == ELEMENT.addEventListener
 
 function selectOptionKeyWord (){
   const userSelection = $(this).val();
   $('li').hide();
   imageArray.forEach(function(storedImages){
     if(userSelection === storedImages.keyword){
-      const imageTitle = storedImages.title;
+      const imageTitle = storedImages.name;
       const imageListItems = $('li');
       imageListItems.each(function(){
-        console.log(imageTitle)
         if($(this).find('h2').text() === imageTitle){
           $(this).show();
         }
@@ -77,3 +83,14 @@ function selectOptionKeyWord (){
     }
   })
 }
+/*
+  Iterate over the array objects
+  if we find a match between the title of our animal object and the selected dropdown value
+  select all the li's
+  iterate over them
+  if the animal object matches the h2 of the list items
+  show that list item
+*/
+
+
+$('li:first-child').hide();
