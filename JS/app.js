@@ -14,6 +14,15 @@ function Gallery (name, src, about, keyword, horns){
   imageArray.push(this)
 }
 
+Gallery.prototype.renderWithCreation = function(){
+  const $newListItem = $('<li></li>');
+  $newListItem.append($('<h2></h2>').text(this.name));
+  $newListItem.append($('<p></p>').text(this.about));
+  $newListItem.append($('<img></img>').attr('src', this.src));
+
+  $('ul').prepend($newListItem)
+}
+
 Gallery.prototype.renderJQuery = function(){
   // get a clone of a pre-existing good html copy
   // replace the values
@@ -29,15 +38,12 @@ Gallery.prototype.renderJQuery = function(){
   $clonedListItemElement.show();
 }
 
-// asynchronous javascript and xml - million years to complete
-// javascript does it asynchronously - does it in background
 const optionObject = {
   // this is an object literal with properties
   method: 'get',
   datatype: 'json'
 }
 
-// reconstitute - pass it(back) trhough the constructor
 const handleImagesFromJson = ArrFromJson => {
   // the thing before an arrow function is the parameter = (arrfromjson)
   ArrFromJson.forEach(newImages => {
@@ -48,10 +54,10 @@ const handleImagesFromJson = ArrFromJson => {
 
     }
   });
-  imageArray.forEach(petValue => petValue.renderJQuery());
+  imageArray.forEach(petValue => petValue.renderMustache());
   renderOptionSelection(KeyWordArray);
 };
-$.ajax('page-1.json', optionObject)
+$.ajax('data/page-1.json', optionObject)
   .then(handleImagesFromJson);
 
 const renderOptionSelection = function (KeyWordArray) {
@@ -91,6 +97,12 @@ function selectOptionKeyWord (){
   if the animal object matches the h2 of the list items
   show that list item
 */
+
+Gallery.prototype.renderMustache = function() {
+  const newHtml = Mustache.render($('#image-Template').html(), this);
+  $('ul').append(newHtml)
+}
+
 
 
 $('li:first-child').hide();
